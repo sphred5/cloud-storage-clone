@@ -4,6 +4,7 @@ import Login from "./Login";
 import { Container } from "react-bootstrap";
 import { AuthProvider } from "../contexts/AuthContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
 
 function App() {
   return (
@@ -15,7 +16,11 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <Routes>
-              <Route exact path="/" element={<Dashboard/>}/>
+              <Route path="/" element={
+                <PrivateRoute>
+                  <Dashboard/>
+                </PrivateRoute>
+              }/>
               <Route path="/signup" element={<Signup />}/>
               <Route path="/login" element={<Login />}/>
             </Routes>
