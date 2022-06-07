@@ -5,10 +5,10 @@ const ACTIONS = {
   UPDATE_FOLDER: "update-folder"
 }
 
-const ROOT_FOLDER = {name: 'Root', id: null, path: [] }
+const ROOT_FOLDER = { name: 'Root', id: null, path: [] }
 
-function reducer(state, {type, payload}) {
-  switch(type) {
+function reducer(state, { type, payload }) {
+  switch (type) {
     case ACTIONS.SELECT_FOLDER:
       return {
         folderId: payload.folderId,
@@ -16,13 +16,13 @@ function reducer(state, {type, payload}) {
         childFiles: [],
         childFolders: [],
       }
-      case ACTIONS.UPDATE_FOLDER:
-        return {
-          ...state,
-          folder: payload.folder
-        }
-      default:
-        return state
+    case ACTIONS.UPDATE_FOLDER:
+      return {
+        ...state,
+        folder: payload.folder
+      }
+    default:
+      return state
   }
 }
 
@@ -30,22 +30,27 @@ export function useFolder(folderId = null, folder = null) {
   const [state, dispatch] = useReducer(reducer, {
     folderId,
     folder,
-    childFolders : [],
-    childFiles : []
+    childFolders: [],
+    childFiles: []
   });
 
   useEffect(() => {
-    dispatch({type: ACTIONS.SELECT_FOLDER, payload: {folderId, folder}})
+    dispatch({
+      type: ACTIONS.SELECT_FOLDER,
+      payload: {
+        folderId, folder
+      }
+    })
   }, [folderId, folder]);
 
-  useEffect(()=> {
-    if(folderId == null) {
+  useEffect(() => {
+    if (folderId == null) {
       return dispatch({
         type: ACTIONS.UPDATE_FOLDER,
-        payload : {folder: ROOT_FOLDER}
+        payload: { folder: ROOT_FOLDER }
       })
     }
-  },[folderId])
+  }, [folderId])
 
   return state;
 }
