@@ -6,7 +6,7 @@ import { addDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import {useAuth} from '../../contexts/AuthContext'
 
-const AddFolderButton = () => {
+const AddFolderButton = ({currentFolder}) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const {currentUser} = useAuth();
@@ -21,9 +21,11 @@ const AddFolderButton = () => {
   function handleSubmit(e){
     e.preventDefault();
 
+    if (currentFolder == null) return;
+
     addDoc(db.folders, {
       name : name,
-      // parentId,
+      parentId: currentFolder.id,
       userId : currentUser.uid,
       // path,
       createdAt:db.getCurrentTimeStamp
