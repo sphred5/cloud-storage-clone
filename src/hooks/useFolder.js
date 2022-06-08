@@ -1,8 +1,12 @@
 import { useReducer, useEffect } from "react";
+import { doc, getDoc, where, query, orderBy, onSnapshot, snapshotEqual } from "firebase/firestore";
+import { useAuth } from "../contexts/AuthContext";
+import { db } from "../firebase";
 
 const ACTIONS = {
   SELECT_FOLDER: "select-folder",
-  UPDATE_FOLDER: "update-folder"
+  UPDATE_FOLDER: "update-folder",
+  SET_CHILD_FOLDERS: "set-child-folders"
 }
 
 const ROOT_FOLDER = { name: 'Root', id: null, path: [] }
@@ -16,11 +20,17 @@ function reducer(state, { type, payload }) {
         childFiles: [],
         childFolders: [],
       }
+
     case ACTIONS.UPDATE_FOLDER:
       return {
         ...state,
         folder: payload.folder
       }
+      case ACTIONS.SET_CHILD_FOLDERS:
+        return {
+          ...state,
+          childFolders: payload.childFolders
+        }
     default:
       return state
   }
@@ -33,6 +43,8 @@ export function useFolder(folderId = null, folder = null) {
     childFolders: [],
     childFiles: []
   });
+
+  const {currentUser} = useAuth();
 
   useEffect(() => {
     dispatch({
@@ -50,7 +62,46 @@ export function useFolder(folderId = null, folder = null) {
         payload: { folder: ROOT_FOLDER }
       })
     }
-  }, [folderId])
+    const docRef = doc(db.folders, folderId);
+
+    const fetchDoc = async () => {
+      try {
+        const docSnap = await getDoc(docRef);
+        dispatch({
+          type: ACTIONS.UPDATE_FOLDER,
+          payload: { folder: db.formatDoc(docSnap) }
+        })
+
+      } catch {
+        return dispatch({
+          type: ACTIONS.UPDATE_FOLDER,
+          payload: { folder: ROOT_FOLDER }
+        })
+      }
+    }
+
+    fetchDoc();
+
+
+  }, [folderId]);
+
+  useEffect(() => {
+    return onSnapshot(
+      query(db.folders,
+        where("parentId", "==", folderId),
+        where("userId", "==", currentUser.uid),
+        orderBy("createdAt")
+        ),
+        (snapshot) => {
+          dispatch({
+            type: ACTIONS.SET_CHILD_FOLDERS,
+            payload: {childFolders: snapshot.docs.map(db.formatDoc)}
+          })
+        }  
+    )   
+
+  }, [folderId, currentUser])
+
 
   return state;
 }

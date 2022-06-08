@@ -15,6 +15,12 @@ const firestore = getFirestore(app);
 export const db = {
   folders: collection(firestore, 'folders'),
   files: collection(firestore, 'files'),
+  formatDoc: docSnap => {
+    return {
+        id: docSnap.id,
+        ...docSnap.data()
+    }
+  },
   getCurrentTimeStamp : serverTimestamp() 
 }
 export const auth = getAuth();
