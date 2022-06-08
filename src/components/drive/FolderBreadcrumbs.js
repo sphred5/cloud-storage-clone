@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom';
 
 const FolderBreadcrumbs = ({ currentFolder }) => {
   let path = currentFolder === ROOT_FOLDER ? [] : [ROOT_FOLDER];
-  if (currentFolder) path = [...path, currentFolder.path];
+  if (currentFolder) path = [...path, ...currentFolder.path];
   return (
     <Breadcrumb 
-    className="flex-grow-1 ps-1 m-1"
+    className="flex-grow-1"
+    listProps={{ className: "bg-white pl-0 m-0" }}
     >{path.map((folder, index) => (
       <Breadcrumb.Item
       key={folder.id}
@@ -22,19 +23,19 @@ const FolderBreadcrumbs = ({ currentFolder }) => {
       {folder.name}
     </Breadcrumb.Item>
    ))}
+      {currentFolder && (
+         <Breadcrumb.Item
+           className="text-truncate d-inline-block"
+           style={{ maxWidth: '200px' }}
+           active
+         >
+           {currentFolder.name}
+         </Breadcrumb.Item>
+       )}
     </Breadcrumb>
 
-    // <Breadcrumb>
-    //  {currentFolder && (
-    //     <Breadcrumb.Item
-    //       className="text-truncate d-inline-block"
-    //       style={{ maxWidth: '200px' }}
-    //       active
-    //     >
-    //       {currentFolder.name}
-    //     </Breadcrumb.Item>
-    //   )}
-    // </Breadcrumb>
+   
+
   );
 }
 
