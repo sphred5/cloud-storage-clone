@@ -1,4 +1,5 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import NavBar from './NavBar';
 import { useFolder } from '../../hooks/useFolder';
@@ -7,8 +8,8 @@ import Folder from '../Folder';
 
 
 const Dashboard = () => {
-
-  const { folder, childFolders } = useFolder("W3Ell1lAqYLbIG0yASEk");
+  const {folderId} = useParams();
+  const { folder, childFolders } = useFolder(folderId);
 
   return (
     <>

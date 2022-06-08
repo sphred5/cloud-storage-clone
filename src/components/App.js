@@ -33,6 +33,11 @@ function App() {
                   <UpdateProfile/> 
                 </PrivateRoute>
               }/>
+              <Route path="/folder/:folderId" element={
+                <PrivateRoute>
+                  <Dashboard/> 
+                </PrivateRoute>
+              }/>
 
               {/* Authentication */}
               <Route path="/signup" element={<Signup />}/>

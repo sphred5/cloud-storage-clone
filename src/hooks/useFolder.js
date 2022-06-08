@@ -1,5 +1,5 @@
 import { useReducer, useEffect } from "react";
-import { doc, getDoc, where, query, orderBy, onSnapshot, snapshotEqual } from "firebase/firestore";
+import { doc, getDoc, where, query, orderBy, onSnapshot } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
 import { db } from "../firebase";
 
