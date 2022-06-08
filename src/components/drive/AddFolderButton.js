@@ -5,6 +5,7 @@ import { faFolderPlus } from '@fortawesome/free-solid-svg-icons';
 import { addDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import {useAuth} from '../../contexts/AuthContext'
+import { ROOT_FOLDER } from '../../hooks/useFolder';
 
 const AddFolderButton = ({currentFolder}) => {
   const [open, setOpen] = useState(false);
@@ -23,11 +24,16 @@ const AddFolderButton = ({currentFolder}) => {
 
     if (currentFolder == null) return;
 
+    const path = [...currentFolder.path];
+    if (currentFolder !== ROOT_FOLDER){
+      path.push({name: currentFolder.name, id: currentFolder.id}) 
+    }
+
     addDoc(db.folders, {
       name : name,
       parentId: currentFolder.id,
       userId : currentUser.uid,
-      // path,
+      path : path,
       createdAt:db.getCurrentTimeStamp
     })
 

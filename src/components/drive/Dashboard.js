@@ -4,8 +4,8 @@ import { Container } from 'react-bootstrap';
 import NavBar from './NavBar';
 import { useFolder } from '../../hooks/useFolder';
 import AddFolderButton from './AddFolderButton';
-import Folder from '../Folder';
-
+import Folder from './Folder';
+import FolderBreadcrumbs from './FolderBreadcrumbs';
 
 const Dashboard = () => {
   const {folderId} = useParams();
@@ -15,7 +15,10 @@ const Dashboard = () => {
     <>
       <NavBar />
       <Container fluid>
+        <div className="d-flex align-items-center">
+        <FolderBreadcrumbs currentFolder={folder}/>
         <AddFolderButton currentFolder={folder} />
+        </div>
         {childFolders.length > 0 && (
           <div className="d-flex flex-wrap">
             {childFolders.map(childFolder => (
