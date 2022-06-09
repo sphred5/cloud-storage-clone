@@ -62,9 +62,10 @@ export function useFolder(folderId = null, folder = null) {
         payload: { folder: ROOT_FOLDER }
       })
     }
-    const docRef = doc(db.folders, folderId);
 
     const fetchDoc = async () => {
+
+      const docRef = doc(db.folders, folderId);
       try {
         const docSnap = await getDoc(docRef);
         dispatch({
@@ -81,7 +82,6 @@ export function useFolder(folderId = null, folder = null) {
     }
 
     fetchDoc();
-
   }, [folderId]);
 
   useEffect(() => {
@@ -89,8 +89,7 @@ export function useFolder(folderId = null, folder = null) {
       query(db.folders,
         where("parentId", "==", folderId),
         where("userId", "==", currentUser.uid),
-        orderBy("createdAt")
-        ),
+        orderBy("createdAt")),
         (snapshot) => {
           dispatch({
             type: ACTIONS.SET_CHILD_FOLDERS,
@@ -98,9 +97,6 @@ export function useFolder(folderId = null, folder = null) {
           })
         }  
     )   
-
   }, [folderId, currentUser])
-
-
   return state;
 }
