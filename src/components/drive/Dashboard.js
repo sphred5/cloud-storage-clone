@@ -9,10 +9,11 @@ import FolderBreadcrumbs from './FolderBreadcrumbs';
 
 const Dashboard = () => {
   const {folderId} = useParams();
-  const  state  = useLocation();
+  // const  {state = {}}  = useLocation();
+  const {state} = useLocation();
+
   
   const { folder, childFolders } = useFolder(folderId, state.folder);
-  console.log(folder)
 
   return (
     <>

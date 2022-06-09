@@ -18,8 +18,8 @@ const FolderBreadcrumbs = ({ currentFolder }) => {
         linkAs={Link}
         linkProps={{
           to: { pathname: folder.id ? `/folder/${folder.id}` : "/" },
-          state: {folder: { ...folder, path: path.slice(1, index)}}
-        }}      
+          state: "AAAAA" //{folder: { ...folder, path: path.slice(1, index)}}
+        }}     
         className="text-truncate d-inline-block"
         style={{ maxWidth: '150px' }}
       >
@@ -27,7 +27,7 @@ const FolderBreadcrumbs = ({ currentFolder }) => {
       </Breadcrumb.Item>
     ))}
       {currentFolder && (
-        <Breadcrumb.Item
+        <Breadcrumb.Item    
           className="text-truncate d-inline-block"
           style={{ maxWidth: '200px' }}
           active
@@ -36,9 +36,7 @@ const FolderBreadcrumbs = ({ currentFolder }) => {
         </Breadcrumb.Item>
       )}
     </Breadcrumb>
-
-
-
+    
   );
 }
 
