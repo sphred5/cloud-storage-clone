@@ -6,9 +6,13 @@ import { faFolder } from '@fortawesome/free-solid-svg-icons';
 
 const Folder = ({ folder }) => {
     return (
-        <Button variant="outline-dark"
+        <Button
+            as={Link}
+            to={`/folder/${folder.id}`}
+            state={{folder: folder}}
+            variant="outline-dark"
             className="text-truncate w-100"
-            as={Link} to={`/folder/${folder.id}`}>
+        >
             <FontAwesomeIcon icon={faFolder} className="me-2" />
             {folder.name}
         </Button>

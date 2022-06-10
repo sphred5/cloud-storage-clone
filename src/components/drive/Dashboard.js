@@ -8,12 +8,11 @@ import Folder from './Folder';
 import FolderBreadcrumbs from './FolderBreadcrumbs';
 
 const Dashboard = () => {
-  const {folderId} = useParams();
-  // const  {state = {}}  = useLocation();
-  const {state} = useLocation();
-
-  
-  const { folder, childFolders } = useFolder(folderId, state.folder);
+    const {folderId} = useParams();
+    let  {state}  = useLocation();
+    state ? state = state : state = {};
+    
+const { folder, childFolders } = useFolder(folderId, state.folder);
 
   return (
     <>
@@ -25,7 +24,8 @@ const Dashboard = () => {
         </div>
         {childFolders.length > 0 && (
           <div className="d-flex flex-wrap">
-            {childFolders.map(childFolder => (
+            {childFolders.map(childFolder => 
+            (
               <div
                 key={childFolder.id}
                 style={{ maxWidth: '250px' }}
