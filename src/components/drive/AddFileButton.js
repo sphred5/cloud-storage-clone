@@ -5,7 +5,7 @@ import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '../../contexts/AuthContext';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db } from '../../firebase';
-import { addDoc } from 'firebase/firestore';
+import { addDoc, updateDoc, where } from 'firebase/firestore';
 import { ROOT_FOLDER } from '../../hooks/useFolder';
 import { v4 as uuIdV4 } from "uuid";
 import { Toast } from 'react-bootstrap';
@@ -52,19 +52,19 @@ const AddFileButton = ({ currentFolder }) => {
       (error) => {
         setUploadingFiles(prevUploadingFiles => {
           return prevUploadingFiles.map(uploadFile => {
-            if(uploadFile.id === id){
-              return {...uploadFile, error:true }
+            if (uploadFile.id === id) {
+              return { ...uploadFile, error: true }
             }
             return uploadFile;
           })
         })
       },
       () => {
-        
+
         setUploadingFiles(prevUploadingFiles => {
           return prevUploadingFiles.filter(uploadFile => {
             return uploadFile.id !== id
-          } )
+          })
         })
 
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -75,7 +75,16 @@ const AddFileButton = ({ currentFolder }) => {
               createdAt: db.getCurrentTimeStamp,
               folderId: currentFolder.id,
               userId: currentUser.uid
-            }
+            }, where("name", "==", file.name),
+               where("userId", "==", currentUser.uid),
+               where("folderId", "==", currentFolder.id).then (existingFiles => {
+                const existingFile = existingFiles[0];
+                if(existingFile) {
+                  updateDoc(existingFile.ref, {url : downloadURL})
+                }else {
+                  
+                }
+               })
           )
 
         });
@@ -125,9 +134,9 @@ const AddFileButton = ({ currentFolder }) => {
                   <ProgressBar
                     animated={!file.error}
                     variant={file.error ? "danger" : "primary"}
-                    now={file.error ? 100 : file.progress }
+                    now={file.error ? 100 : file.progress}
                     label={
-                      file.error ? "Error" : `${Math.round(file.progress )}%`
+                      file.error ? "Error" : `${Math.round(file.progress)}%`
                     }
                   />
                 </Toast.Body>
