@@ -5,7 +5,7 @@ import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '../../contexts/AuthContext';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db } from '../../firebase';
-import { addDoc, updateDoc, getDoc, doc, where, query } from 'firebase/firestore';
+import { getDoc, doc, where } from 'firebase/firestore';
 import { ROOT_FOLDER } from '../../hooks/useFolder';
 import { v4 as uuIdV4 } from "uuid";
 import { Toast } from 'react-bootstrap';
@@ -33,11 +33,11 @@ const AddFileButton = ({ currentFolder }) => {
         .map(folder => folder.id).join('/')}/${currentFolder.name}/${file.name}`;
 
     const storageRef = ref(storage, `/files/${currentUser.uid}/${filePath}`);
+    console.log(storageRef)
     const uploadTask = uploadBytesResumable(storageRef, file);
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setUploadingFiles(prevUploadingFiles => {
@@ -51,6 +51,7 @@ const AddFileButton = ({ currentFolder }) => {
       },
       (error) => {
         setUploadingFiles(prevUploadingFiles => {
+          console.log("ERROR", error)
           return prevUploadingFiles.map(uploadFile => {
             if (uploadFile.id === id) {
               return { ...uploadFile, error: true }
@@ -67,35 +68,23 @@ const AddFileButton = ({ currentFolder }) => {
           })
         })
 
-
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        getDownloadURL(uploadTask.snapshot.ref)
+        .then((downloadURL) => {
           const docRef = doc(db.files);
           getDoc(docRef,
             where("name", "==", file.name),
             where("userId", "==", currentUser.uid),
             where("folderId", "==", currentFolder.id))
-          .then(
-            existingFiles => {
-              const existingFile = existingFiles[0];
-              if (existingFiles) {
-                // updateDoc(existingFile)
-                console.log("Update Existing Files");
-              } else {
-                console.log("Add New File");
-                // addDoc(db.files,
-                //   {
-                //     url: downloadURL,
-                //     name: file.name,
-                //     createdAt: db.getCurrentTimeStamp,
-                //     folderId: currentFolder.id,
-                //     userId: currentUser.uid
-                //   }
-                // )
-
+            .then(existingFiles => {
+              const existingFile = existingFiles.docs[0]
+              if(existingFile){
+                console.log("FILE EXISTS")
+              }else {
+                console.log("ADD NEW FILE")
               }
             })
-
         });
+   
       }
     );
   };
