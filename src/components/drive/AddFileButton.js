@@ -5,7 +5,7 @@ import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '../../contexts/AuthContext';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db } from '../../firebase';
-import { addDoc, updateDoc, where } from 'firebase/firestore';
+import { addDoc, updateDoc, getDoc, doc, where, query } from 'firebase/firestore';
 import { ROOT_FOLDER } from '../../hooks/useFolder';
 import { v4 as uuIdV4 } from "uuid";
 import { Toast } from 'react-bootstrap';
@@ -67,25 +67,33 @@ const AddFileButton = ({ currentFolder }) => {
           })
         })
 
+
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          addDoc(db.files,
-            {
-              url: downloadURL,
-              name: file.name,
-              createdAt: db.getCurrentTimeStamp,
-              folderId: currentFolder.id,
-              userId: currentUser.uid
-            }, where("name", "==", file.name),
-               where("userId", "==", currentUser.uid),
-               where("folderId", "==", currentFolder.id).then (existingFiles => {
-                const existingFile = existingFiles[0];
-                if(existingFile) {
-                  updateDoc(existingFile.ref, {url : downloadURL})
-                }else {
-                  
-                }
-               })
-          )
+          const docRef = doc(db.files);
+          getDoc(docRef,
+            where("name", "==", file.name),
+            where("userId", "==", currentUser.uid),
+            where("folderId", "==", currentFolder.id))
+          .then(
+            existingFiles => {
+              const existingFile = existingFiles[0];
+              if (existingFiles) {
+                // updateDoc(existingFile)
+                console.log("Update Existing Files");
+              } else {
+                console.log("Add New File");
+                // addDoc(db.files,
+                //   {
+                //     url: downloadURL,
+                //     name: file.name,
+                //     createdAt: db.getCurrentTimeStamp,
+                //     folderId: currentFolder.id,
+                //     userId: currentUser.uid
+                //   }
+                // )
+
+              }
+            })
 
         });
       }
