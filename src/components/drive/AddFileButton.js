@@ -5,7 +5,7 @@ import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '../../contexts/AuthContext';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db } from '../../firebase';
-import { query, doc, updateDoc, where, getDocs, addDoc } from 'firebase/firestore';
+import { query, updateDoc, where, getDocs, addDoc } from 'firebase/firestore';
 import { ROOT_FOLDER } from '../../hooks/useFolder';
 import { v4 as uuIdV4 } from "uuid";
 import { Toast } from 'react-bootstrap';
